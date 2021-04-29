@@ -34,8 +34,6 @@ def EMA(code, startdate, enddate, frequency='d'):
 
 
 def get_k_data(code, startdate, enddate, frequency='d'):
-    #### 登陆系统 ####
-    bs.login()
 
     if frequency == 'd':
         fields = "date,open,close,tradeStatus"
@@ -55,8 +53,6 @@ def get_k_data(code, startdate, enddate, frequency='d'):
         # 获取一条记录，将记录合并在一起
         result_list.append(rs.get_row_data())
     df = pd.DataFrame(result_list, columns=rs.fields)
-
-    bs.logout()
 
     # 剔除停盘数据
     if frequency == 'd':

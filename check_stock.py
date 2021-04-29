@@ -4,6 +4,7 @@ import time
 
 import pandas as pd
 import stock
+import baostock as bs
 
 
 def dispatch(row):
@@ -38,12 +39,11 @@ def handle_buy(row):
 
 def watch_to_pre_buy(row):
     year = time.localtime().tm_year
-    pre_year = year - 3
+    pre_year = year - 4
     start_date = str(pre_year) + time.strftime("-%m-%d", time.localtime())
     end_date = time.strftime("%Y-%m-%d", time.localtime())
 
     df = stock.MACD(row['code'], start_date, end_date, 'm').tail(3)
-
     condition = (df['MACD'][1] < df['MACD'][0]) and (df['MACD'][1] < df['MACD'][2])
     condition2 = (df['MACD'][1] < 0) and (0 < df['MACD'][2])
     return condition or condition2
@@ -71,7 +71,10 @@ def buy_to_watch(row):
 
 
 if __name__ == '__main__':
+    #### 登陆系统 ####
+    bs.login()
     stock_list = pd.read_csv("stock_list.csv", converters={'price': float})
     stock_list['status'] = stock_list.apply(lambda row: dispatch(row), axis=1)
     stock_list.to_csv("stock_list.csv", index=False)
     print(stock_list)
+    bs.logout()
